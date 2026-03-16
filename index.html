@@ -3,40 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Cliente - Visualização de Dados</title>
+    <title>Sistema de Cadastro Restrito</title>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #4b0082 0%, #6a1b9a 100%); 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
             display: flex; 
             justify-content: center; 
             align-items: flex-start;
             min-height: 100vh;
             margin: 0;
             padding: 40px 20px;
+            color: #333;
         }
 
         .container { 
             background: white; 
             padding: 30px; 
             border-radius: 15px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
             width: 100%; 
             max-width: 500px; 
         }
 
-        h2 { color: #4b0082; margin-top: 0; }
+        h2 { color: #4b0082; margin-top: 0; text-align: center; }
+        h3 { color: #4b0082; font-size: 1.1rem; }
         
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #4b0082; }
         
         input, select { 
             width: 100%; 
-            padding: 10px; 
+            padding: 12px; 
             box-sizing: border-box; 
             border: 2px solid #f3e5f5; 
             border-radius: 8px; 
             outline: none;
+            transition: 0.3s;
         }
 
         input:focus { border-color: #8e44ad; }
@@ -45,7 +48,7 @@
         
         .btn-enviar { 
             width: 100%; 
-            padding: 12px; 
+            padding: 14px; 
             background-color: #8e44ad; 
             color: white; 
             border: none; 
@@ -54,22 +57,23 @@
             font-size: 16px; 
             font-weight: bold;
             transition: 0.3s;
+            margin-top: 10px;
         }
 
-        .btn-enviar:hover { background-color: #4b0082; }
+        .btn-enviar:hover { background-color: #4b0082; transform: translateY(-2px); }
 
-        /* Estilo da Lista e Detalhes */
-        .lista-container { margin-top: 30px; border-top: 2px solid #f3e5f5; padding-top: 20px; }
+        /* Estilo da Lista */
+        .lista-container { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
         
         #lista-clientes { list-style: none; padding: 0; }
         
         .cliente-item { 
-            background: #fdfaff; 
+            background: #f9f9f9; 
             padding: 15px; 
             border-radius: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             border-left: 5px solid #8e44ad;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .cliente-topo {
@@ -80,33 +84,43 @@
         }
 
         .detalhes {
-            display: none; /* Escondido por padrão */
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px dashed #ddd;
+            display: none; /* Protegido */
+            margin-top: 12px;
+            padding: 10px;
+            background-color: #f3e5f5;
+            border-radius: 5px;
             font-size: 0.9rem;
-            color: #555;
+            border: 1px dashed #8e44ad;
         }
-
-        .detalhes p { margin: 5px 0; }
-        .detalhes strong { color: #8e44ad; }
 
         .tag-plano {
             font-size: 0.7rem;
-            background: #8e44ad;
+            background: #4b0082;
             color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 5px;
+            text-transform: uppercase;
         }
 
         .btn-ver {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #8e44ad;
-            background: none;
+            background: white;
             border: 1px solid #8e44ad;
-            padding: 2px 5px;
+            padding: 5px 10px;
             border-radius: 4px;
             cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-ver:hover { background: #8e44ad; color: white; }
+
+        .aviso-privacidade {
+            font-size: 0.75rem;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -114,19 +128,23 @@
 
     <div class="container">
         <form id="formCadastro">
-            <h2>Cadastro de Cliente</h2>
+            <h2>Cadastro de Clientes</h2>
+            <p class="aviso-privacidade">🔒 Apenas administradores com senha podem ver os detalhes.</p>
+            
             <div class="input-group">
                 <label>Nome Completo</label>
-                <input type="text" id="nome" required>
+                <input type="text" id="nome" placeholder="Ex: João Silva" required>
             </div>
+
             <div class="input-group">
                 <label>E-mail</label>
-                <input type="email" id="email" required>
+                <input type="email" id="email" placeholder="email@exemplo.com" required>
             </div>
+
             <div class="row">
                 <div class="input-group" style="flex: 2;">
                     <label>Telefone</label>
-                    <input type="tel" id="telefone">
+                    <input type="tel" id="telefone" placeholder="(00) 00000-0000">
                 </div>
                 <div class="input-group" style="flex: 1;">
                     <label>Plano</label>
@@ -137,25 +155,31 @@
                     </select>
                 </div>
             </div>
-            <button type="submit" class="btn-enviar">Finalizar Cadastro</button>
+
+            <button type="submit" class="btn-enviar">Cadastrar Cliente</button>
         </form>
 
         <div class="lista-container">
-            <h3>Clientes Cadastrados</h3>
-            <p style="font-size: 0.8rem; color: #888;">Clique no nome para ver os dados.</p>
+            <h3>Clientes Registrados</h3>
             <ul id="lista-clientes"></ul>
         </div>
     </div>
 
     <script>
+        // --- CONFIGURAÇÃO ---
+        const SENHA_MESTRE = "1234"; // VOCÊ PODE ALTERAR SUA SENHA AQUI
+        // -------------------
+
         const form = document.getElementById('formCadastro');
         const listaUl = document.getElementById('lista-clientes');
 
+        // Carregar dados ao abrir a página
         window.onload = () => {
             const salvos = JSON.parse(localStorage.getItem('bancoClientes')) || [];
             salvos.forEach(c => adicionarNaTela(c));
         };
 
+        // Evento de envio do formulário
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             
@@ -171,32 +195,48 @@
             form.reset();
         });
 
+        // Função para criar o elemento na lista HTML
         function adicionarNaTela(cliente) {
             const li = document.createElement('li');
             li.className = 'cliente-item';
             
             li.innerHTML = `
-                <div class="cliente-topo" onclick="toggleDetalhes(this)">
+                <div class="cliente-topo" onclick="solicitarAcesso(this)">
                     <strong>${cliente.nome}</strong>
                     <div>
                         <span class="tag-plano">${cliente.plano}</span>
-                        <button class="btn-ver">Ver Dados</button>
+                        <button class="btn-ver">Ver Dados 🔒</button>
                     </div>
                 </div>
                 <div class="detalhes">
-                    <p><strong>E-mail:</strong> ${cliente.email}</p>
-                    <p><strong>Telefone:</strong> ${cliente.telefone}</p>
+                    <p><strong>📧 E-mail:</strong> ${cliente.email}</p>
+                    <p><strong>📞 Telefone:</strong> ${cliente.telefone}</p>
                 </div>
             `;
             listaUl.appendChild(li);
         }
 
-        function toggleDetalhes(elemento) {
+        // Função que bloqueia/libera a visualização
+        function solicitarAcesso(elemento) {
             const abaDetalhes = elemento.nextElementSibling;
-            const estaVisivel = abaDetalhes.style.display === 'block';
-            abaDetalhes.style.display = estaVisivel ? 'none' : 'block';
+            
+            // Se já estiver aberto, apenas fecha
+            if (abaDetalhes.style.display === 'block') {
+                abaDetalhes.style.display = 'none';
+                return;
+            }
+
+            // Se estiver fechado, pede a senha
+            const tentativa = prompt("Acesso Restrito. Digite a senha:");
+
+            if (tentativa === SENHA_MESTRE) {
+                abaDetalhes.style.display = 'block';
+            } else if (tentativa !== null) {
+                alert("Senha incorreta! Acesso negado.");
+            }
         }
 
+        // Salva no banco de dados do navegador (Local Storage)
         function salvar(cliente) {
             let clientes = JSON.parse(localStorage.getItem('bancoClientes')) || [];
             clientes.push(cliente);
