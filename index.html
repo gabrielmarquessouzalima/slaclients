@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Cadastro Restrito</title>
+    <title>Sistema de Gestão Segregado</title>
     <style>
+        :root {
+            --primary: #8e44ad;
+            --dark: #4b0082;
+            --bg: #1a1a2e;
+            --danger: #e74c3c;
+        }
+
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
+            font-family: 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, var(--bg) 0%, #16213e 100%); 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start;
+            align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 40px 20px;
             color: #333;
         }
 
@@ -26,221 +32,188 @@
             max-width: 500px; 
         }
 
-        h2 { color: #4b0082; margin-top: 0; text-align: center; }
-        h3 { color: #4b0082; font-size: 1.1rem; }
+        /* Controle de Telas */
+        #tela-login, #tela-cadastro, #tela-admin { display: none; }
+        .active { display: block !important; }
+
+        h2 { color: var(--dark); text-align: center; margin-bottom: 20px; }
         
         .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #4b0082; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--dark); }
         
         input, select { 
-            width: 100%; 
-            padding: 12px; 
-            box-sizing: border-box; 
-            border: 2px solid #f3e5f5; 
-            border-radius: 8px; 
-            outline: none;
-            transition: 0.3s;
+            width: 100%; padding: 12px; border: 2px solid #f3e5f5; 
+            border-radius: 8px; outline: none; box-sizing: border-box;
         }
 
-        input:focus { border-color: #8e44ad; }
-
-        .row { display: flex; gap: 15px; }
-        
-        .btn-enviar { 
-            width: 100%; 
-            padding: 14px; 
-            background-color: #8e44ad; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            font-weight: bold;
-            transition: 0.3s;
+        .btn { 
+            width: 100%; padding: 14px; border: none; border-radius: 8px; 
+            cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s;
             margin-top: 10px;
         }
 
-        .btn-enviar:hover { background-color: #4b0082; transform: translateY(-2px); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--dark); }
 
-        /* Estilo da Lista */
-        .lista-container { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
-        
-        #lista-clientes { list-style: none; padding: 0; }
-        
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); margin-top: 15px; }
+
+        /* Lista Admin */
         .cliente-item { 
-            background: #f9f9f9; 
-            padding: 15px; 
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border-left: 5px solid #8e44ad;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            background: #f9f9f9; padding: 15px; border-radius: 8px;
+            margin-bottom: 10px; border-left: 5px solid var(--primary);
+            position: relative;
         }
 
-        .cliente-topo {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .detalhes {
-            display: none; /* Protegido */
-            margin-top: 12px;
-            padding: 10px;
-            background-color: #f3e5f5;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            border: 1px dashed #8e44ad;
-        }
-
-        .tag-plano {
-            font-size: 0.7rem;
-            background: #4b0082;
+        .btn-delete {
+            background: var(--danger);
             color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-right: 5px;
-            text-transform: uppercase;
-        }
-
-        .btn-ver {
-            font-size: 0.75rem;
-            color: #8e44ad;
-            background: white;
-            border: 1px solid #8e44ad;
+            border: none;
             padding: 5px 10px;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: bold;
+            font-size: 0.7rem;
+            float: right;
         }
 
-        .btn-ver:hover { background: #8e44ad; color: white; }
-
-        .aviso-privacidade {
-            font-size: 0.75rem;
-            color: #666;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        .header-painel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .logout-link { color: var(--danger); cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        
+        .badge { background: var(--dark); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <form id="formCadastro">
-            <h2>Cadastro de Clientes</h2>
-            <p class="aviso-privacidade">🔒 Apenas administradores com senha podem ver os detalhes.</p>
-            
-            <div class="input-group">
-                <label>Nome Completo</label>
-                <input type="text" id="nome" placeholder="Ex: João Silva" required>
-            </div>
-
-            <div class="input-group">
-                <label>E-mail</label>
-                <input type="email" id="email" placeholder="email@exemplo.com" required>
-            </div>
-
-            <div class="row">
-                <div class="input-group" style="flex: 2;">
-                    <label>Telefone</label>
-                    <input type="tel" id="telefone" placeholder="(00) 00000-0000">
-                </div>
-                <div class="input-group" style="flex: 1;">
-                    <label>Plano</label>
-                    <select id="tipo">
-                        <option value="Básico">Básico</option>
-                        <option value="Premium">Premium</option>
-                        <option value="Business">Business</option>
-                    </select>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-enviar">Cadastrar Cliente</button>
-        </form>
-
-        <div class="lista-container">
-            <h3>Clientes Registrados</h3>
-            <ul id="lista-clientes"></ul>
+    <div id="tela-login" class="container active">
+        <h2>Entrar no Sistema</h2>
+        <div class="input-group">
+            <label>Usuário</label>
+            <input type="text" id="user-input" placeholder="admin ou cliente">
         </div>
+        <div id="campo-senha" class="input-group">
+            <label>Senha</label>
+            <input type="password" id="pass-input" placeholder="Senha para admin">
+        </div>
+        <button class="btn btn-primary" onclick="autenticar()">Acessar</button>
+    </div>
+
+    <div id="tela-cadastro" class="container">
+        <div class="header-painel">
+            <h3>Área do Cliente</h3>
+            <span class="logout-link" onclick="sair()">Sair</span>
+        </div>
+        <form id="formCadastro">
+            <div class="input-group"><label>Nome</label><input type="text" id="nome" required></div>
+            <div class="input-group"><label>E-mail</label><input type="email" id="email" required></div>
+            <div class="input-group"><label>Telefone</label><input type="tel" id="telefone"></div>
+            <div class="input-group">
+                <label>Plano</label>
+                <select id="tipo">
+                    <option value="Básico">Básico</option>
+                    <option value="Premium">Premium</option>
+                    <option value="Business">Business</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Enviar Cadastro</button>
+        </form>
+    </div>
+
+    <div id="tela-admin" class="container" style="max-width: 600px;">
+        <div class="header-painel">
+            <h2>Painel Admin</h2>
+            <span class="logout-link" onclick="sair()">Sair</span>
+        </div>
+        <div id="lista-clientes"></div>
+        <button class="btn btn-outline" onclick="irParaCadastro()">+ Novo Cadastro</button>
     </div>
 
     <script>
-        // --- CONFIGURAÇÃO ---
-        const SENHA_MESTRE = "1234"; // VOCÊ PODE ALTERAR SUA SENHA AQUI
-        // -------------------
+        const SENHA_ADMIN = "123";
+        let modoAtual = "";
 
-        const form = document.getElementById('formCadastro');
-        const listaUl = document.getElementById('lista-clientes');
+        // Troca de Telas
+        function verTela(id) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
 
-        // Carregar dados ao abrir a página
-        window.onload = () => {
-            const salvos = JSON.parse(localStorage.getItem('bancoClientes')) || [];
-            salvos.forEach(c => adicionarNaTela(c));
-        };
+        // Sistema de Login
+        function autenticar() {
+            const u = document.getElementById('user-input').value.toLowerCase();
+            const p = document.getElementById('pass-input').value;
 
-        // Evento de envio do formulário
-        form.addEventListener('submit', (e) => {
+            if (u === 'admin' && p === SENHA_ADMIN) {
+                modoAtual = "admin";
+                verTela('tela-admin');
+                renderizarLista();
+            } else if (u === 'cliente') {
+                modoAtual = "cliente";
+                verTela('tela-cadastro');
+            } else {
+                alert("Dados incorretos! (Admin precisa de senha)");
+            }
+        }
+
+        function sair() {
+            modoAtual = "";
+            document.getElementById('user-input').value = "";
+            document.getElementById('pass-input').value = "";
+            verTela('tela-login');
+        }
+
+        function irParaCadastro() { verTela('tela-cadastro'); }
+
+        // Manipulação de Dados
+        document.getElementById('formCadastro').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const novoCliente = {
+            const cliente = {
+                id: Date.now(), // ID único para deletar depois
                 nome: document.getElementById('nome').value,
                 email: document.getElementById('email').value,
                 telefone: document.getElementById('telefone').value || 'Não informado',
                 plano: document.getElementById('tipo').value
             };
 
-            adicionarNaTela(novoCliente);
-            salvar(novoCliente);
-            form.reset();
+            let banco = JSON.parse(localStorage.getItem('bancoDados')) || [];
+            banco.push(cliente);
+            localStorage.setItem('bancoDados', JSON.stringify(banco));
+
+            alert("Cadastrado com sucesso!");
+            this.reset();
+
+            if(modoAtual === 'admin') {
+                verTela('tela-admin');
+                renderizarLista();
+            } else {
+                sair();
+            }
         });
 
-        // Função para criar o elemento na lista HTML
-        function adicionarNaTela(cliente) {
-            const li = document.createElement('li');
-            li.className = 'cliente-item';
-            
-            li.innerHTML = `
-                <div class="cliente-topo" onclick="solicitarAcesso(this)">
-                    <strong>${cliente.nome}</strong>
-                    <div>
-                        <span class="tag-plano">${cliente.plano}</span>
-                        <button class="btn-ver">Ver Dados 🔒</button>
+        function renderizarLista() {
+            const box = document.getElementById('lista-clientes');
+            const dados = JSON.parse(localStorage.getItem('bancoDados')) || [];
+            box.innerHTML = dados.length === 0 ? "<p>Nenhum registro encontrado.</p>" : "";
+
+            dados.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'cliente-item';
+                div.innerHTML = `
+                    <button class="btn-delete" onclick="remover(${c.id})">Apagar</button>
+                    <strong>${c.nome}</strong> <span class="badge">${c.plano}</span>
+                    <div style="font-size:0.8rem; color:#666; margin-top:5px;">
+                        ${c.email} | ${c.telefone}
                     </div>
-                </div>
-                <div class="detalhes">
-                    <p><strong>📧 E-mail:</strong> ${cliente.email}</p>
-                    <p><strong>📞 Telefone:</strong> ${cliente.telefone}</p>
-                </div>
-            `;
-            listaUl.appendChild(li);
+                `;
+                box.appendChild(div);
+            });
         }
 
-        // Função que bloqueia/libera a visualização
-        function solicitarAcesso(elemento) {
-            const abaDetalhes = elemento.nextElementSibling;
-            
-            // Se já estiver aberto, apenas fecha
-            if (abaDetalhes.style.display === 'block') {
-                abaDetalhes.style.display = 'none';
-                return;
+        function remover(id) {
+            if(confirm("Deseja excluir este cliente?")) {
+                let banco = JSON.parse(localStorage.getItem('bancoDados')) || [];
+                banco = banco.filter(c => c.id !== id);
+                localStorage.setItem('bancoDados', JSON.stringify(banco));
+                renderizarLista();
             }
-
-            // Se estiver fechado, pede a senha
-            const tentativa = prompt("Acesso Restrito. Digite a senha:");
-
-            if (tentativa === SENHA_MESTRE) {
-                abaDetalhes.style.display = 'block';
-            } else if (tentativa !== null) {
-                alert("Senha incorreta! Acesso negado.");
-            }
-        }
-
-        // Salva no banco de dados do navegador (Local Storage)
-        function salvar(cliente) {
-            let clientes = JSON.parse(localStorage.getItem('bancoClientes')) || [];
-            clientes.push(cliente);
-            localStorage.setItem('bancoClientes', JSON.stringify(clientes));
         }
     </script>
 </body>
