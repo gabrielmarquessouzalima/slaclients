@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Cliente - Roxo Premium</title>
+    <title>Cadastro de Cliente - Total Roxo</title>
     <style>
-        /* Fundo Roxo com Gradiente */
+        /* Fundo Totalmente Roxo */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            /* Degradê de Roxo Escuro para Roxo Médio */
+            background: linear-gradient(135deg, #4b0082 0%, #8e44ad 100%); 
             display: flex; 
             justify-content: center; 
             align-items: flex-start;
@@ -21,36 +22,37 @@
             background: white; 
             padding: 30px; 
             border-radius: 15px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
             width: 100%; 
             max-width: 450px; 
         }
 
-        h2 { color: #4b0082; margin-top: 0; }
+        h2 { color: #6a11cb; margin-top: 0; }
         p { color: #666; font-size: 0.9rem; }
 
         .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #4b0082; }
         
         input, select { 
             width: 100%; 
             padding: 10px; 
             box-sizing: border-box; 
-            border: 2px solid #eee; 
+            border: 2px solid #f3e5f5; 
             border-radius: 8px; 
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
 
-        input:focus { border-color: #6a11cb; }
+        /* Borda roxa ao clicar no campo */
+        input:focus { border-color: #8e44ad; box-shadow: 0 0 5px rgba(142, 68, 173, 0.3); }
 
         .row { display: flex; gap: 15px; }
         
-        /* Botão estilizado */
+        /* Botão Roxo */
         .btn-enviar { 
             width: 100%; 
             padding: 12px; 
-            background-color: #6a11cb; 
+            background-color: #8e44ad; 
             color: white; 
             border: none; 
             border-radius: 8px; 
@@ -61,12 +63,12 @@
             transition: background 0.3s;
         }
 
-        .btn-enviar:hover { background-color: #4b0082; }
+        .btn-enviar:hover { background-color: #6a1b9a; }
 
         /* Estilo da Lista */
         .lista-container { 
             margin-top: 30px; 
-            border-top: 2px solid #f0f0f0; 
+            border-top: 2px solid #f3e5f5; 
             padding-top: 20px; 
         }
 
@@ -75,23 +77,25 @@
         #lista-clientes { list-style: none; padding: 0; }
         
         #lista-clientes li { 
-            background: #f8f9fa; 
+            background: #fdfaff; 
             padding: 12px; 
             border-radius: 8px;
             margin-bottom: 8px;
             display: flex; 
             justify-content: space-between; 
             align-items: center;
-            border-left: 4px solid #4d3665;
+            border-left: 4px solid #8e44ad;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        .data-label { 
+        .plano-tag { 
             font-size: 0.7rem; 
+            font-weight: bold;
             text-transform: uppercase; 
-            background: #e0d4ff; 
-            color: #a771e1; 
-            padding: 2px 8px; 
-            border-radius: 10px;
+            background: #f3e5f5; 
+            color: #8e44ad; 
+            padding: 4px 10px; 
+            border-radius: 20px;
         }
     </style>
 </head>
@@ -141,7 +145,6 @@
         const form = document.getElementById('formCadastro');
         const listaUl = document.getElementById('lista-clientes');
 
-        // Carregar dados salvos
         window.onload = () => {
             const salvos = JSON.parse(localStorage.getItem('meusClientes')) || [];
             salvos.forEach(c => adicionarNaTela(c.nome, c.plano));
@@ -164,7 +167,7 @@
             const li = document.createElement('li');
             li.innerHTML = `
                 <strong>${nome}</strong> 
-                <span class="data-label">${plano}</span>
+                <span class="plano-tag">${plano}</span>
             `;
             listaUl.appendChild(li);
         }
