@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestão Segregado</title>
+    <title>Sistema de Gestão - Início</title>
     <style>
         :root {
             --primary: #8e44ad;
@@ -29,176 +29,165 @@
             border-radius: 15px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
             width: 100%; 
-            max-width: 500px; 
+            max-width: 450px; 
+            text-align: center;
         }
 
-        /* Controle de Telas */
-        #tela-login, #tela-cadastro, #tela-admin { display: none; }
+        /* Telas */
+        .tela { display: none; }
         .active { display: block !important; }
 
-        h2 { color: var(--dark); text-align: center; margin-bottom: 20px; }
+        h2 { color: var(--dark); margin-bottom: 20px; }
         
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--dark); }
-        
-        input, select { 
-            width: 100%; padding: 12px; border: 2px solid #f3e5f5; 
-            border-radius: 8px; outline: none; box-sizing: border-box;
+        .btn-escolha {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
         }
 
         .btn { 
             width: 100%; padding: 14px; border: none; border-radius: 8px; 
             cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s;
-            margin-top: 10px;
+            box-sizing: border-box;
         }
 
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--dark); }
+        .btn-primary:hover { background: var(--dark); transform: scale(1.02); }
 
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); margin-top: 15px; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: #f3e5f5; }
 
-        /* Lista Admin */
+        input { 
+            width: 100%; padding: 12px; border: 2px solid #f3e5f5; 
+            border-radius: 8px; outline: none; box-sizing: border-box; margin-bottom: 15px;
+        }
+
         .cliente-item { 
             background: #f9f9f9; padding: 15px; border-radius: 8px;
             margin-bottom: 10px; border-left: 5px solid var(--primary);
-            position: relative;
+            text-align: left; position: relative;
         }
 
         .btn-delete {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            float: right;
+            background: var(--danger); color: white; border: none;
+            padding: 5px 10px; border-radius: 4px; cursor: pointer;
+            font-size: 0.7rem; float: right;
         }
 
-        .header-painel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .logout-link { color: var(--danger); cursor: pointer; font-weight: bold; font-size: 0.9rem; }
-        
-        .badge { background: var(--dark); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; }
+        .logout-link { color: var(--danger); cursor: pointer; display: block; margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="tela-login" class="container active">
-        <h2>Entrar no Sistema</h2>
-        <div class="input-group">
-            <label>Usuário</label>
-            <input type="text" id="user-input" placeholder="admin ou cliente">
+    <div id="tela-perfil" class="container active">
+        <h2>Bem-vindo!</h2>
+        <p>Como você deseja acessar o sistema?</p>
+        <div class="btn-escolha">
+            <button class="btn btn-primary" onclick="irParaLoginAdmin()">Sou Administrador</button>
+            <button class="btn btn-outline" onclick="irParaCadastroCliente()">Sou Cliente</button>
         </div>
-        <div id="campo-senha" class="input-group">
-            <label>Senha</label>
-            <input type="password" id="pass-input" placeholder="Senha para admin">
-        </div>
-        <button class="btn btn-primary" onclick="autenticar()">Acessar</button>
+    </div>
+
+    <div id="tela-login-admin" class="container">
+        <h2>Login Administrativo</h2>
+        <input type="password" id="senha-admin" placeholder="Digite a senha (padrão: 123)">
+        <button class="btn btn-primary" onclick="validarAdmin()">Entrar</button>
+        <button class="btn btn-outline" style="margin-top:10px" onclick="voltarParaPerfil()">Voltar</button>
     </div>
 
     <div id="tela-cadastro" class="container">
-        <div class="header-painel">
-            <h3>Área do Cliente</h3>
-            <span class="logout-link" onclick="sair()">Sair</span>
-        </div>
+        <h2>Novo Cadastro</h2>
         <form id="formCadastro">
-            <div class="input-group"><label>Nome</label><input type="text" id="nome" required></div>
-            <div class="input-group"><label>E-mail</label><input type="email" id="email" required></div>
-            <div class="input-group"><label>Telefone</label><input type="tel" id="telefone"></div>
-            <div class="input-group">
-                <label>Plano</label>
-                <select id="tipo">
-                    <option value="Básico">Básico</option>
-                    <option value="Premium">Premium</option>
-                    <option value="Business">Business</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Enviar Cadastro</button>
+            <input type="text" id="nome" placeholder="Nome Completo" required>
+            <input type="email" id="email" placeholder="E-mail" required>
+            <input type="tel" id="telefone" placeholder="Telefone">
+            <select id="tipo" style="width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #f3e5f5; margin-bottom: 15px;">
+                <option value="Básico">Plano Básico</option>
+                <option value="Premium">Plano Premium</option>
+                <option value="Business">Plano Business</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Finalizar Cadastro</button>
         </form>
+        <span class="logout-link" onclick="voltarParaPerfil()">Cancelar / Voltar</span>
     </div>
 
-    <div id="tela-admin" class="container" style="max-width: 600px;">
-        <div class="header-painel">
-            <h2>Painel Admin</h2>
-            <span class="logout-link" onclick="sair()">Sair</span>
-        </div>
+    <div id="tela-admin-view" class="container" style="max-width: 600px;">
+        <h2>Clientes Cadastrados</h2>
         <div id="lista-clientes"></div>
-        <button class="btn btn-outline" onclick="irParaCadastro()">+ Novo Cadastro</button>
+        <button class="btn btn-outline" onclick="irParaCadastroCliente()">+ Adicionar Novo</button>
+        <span class="logout-link" onclick="voltarParaPerfil()">Sair do Sistema</span>
     </div>
 
     <script>
-        const SENHA_ADMIN = "123";
-        let modoAtual = "";
+        const SENHA_CORRETA = "123";
+        let modoAdmin = false;
 
-        // Troca de Telas
-        function verTela(id) {
-            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+        // Navegação
+        function mostrarTela(id) {
+            document.querySelectorAll('.tela, .container').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
-        // Sistema de Login
-        function autenticar() {
-            const u = document.getElementById('user-input').value.toLowerCase();
-            const p = document.getElementById('pass-input').value;
+        function irParaLoginAdmin() { mostrarTela('tela-login-admin'); }
+        
+        function irParaCadastroCliente() { mostrarTela('tela-cadastro'); }
 
-            if (u === 'admin' && p === SENHA_ADMIN) {
-                modoAtual = "admin";
-                verTela('tela-admin');
+        function voltarParaPerfil() { 
+            modoAdmin = false;
+            document.getElementById('senha-admin').value = "";
+            mostrarTela('tela-perfil'); 
+        }
+
+        // Lógica Admin
+        function validarAdmin() {
+            const senha = document.getElementById('senha-admin').value;
+            if (senha === SENHA_CORRETA) {
+                modoAdmin = true;
+                mostrarTela('tela-admin-view');
                 renderizarLista();
-            } else if (u === 'cliente') {
-                modoAtual = "cliente";
-                verTela('tela-cadastro');
             } else {
-                alert("Dados incorretos! (Admin precisa de senha)");
+                alert("Senha incorreta!");
             }
         }
 
-        function sair() {
-            modoAtual = "";
-            document.getElementById('user-input').value = "";
-            document.getElementById('pass-input').value = "";
-            verTela('tela-login');
-        }
-
-        function irParaCadastro() { verTela('tela-cadastro'); }
-
-        // Manipulação de Dados
+        // Lógica de Cadastro
         document.getElementById('formCadastro').addEventListener('submit', function(e) {
             e.preventDefault();
             const cliente = {
-                id: Date.now(), // ID único para deletar depois
+                id: Date.now(),
                 nome: document.getElementById('nome').value,
                 email: document.getElementById('email').value,
                 telefone: document.getElementById('telefone').value || 'Não informado',
                 plano: document.getElementById('tipo').value
             };
 
-            let banco = JSON.parse(localStorage.getItem('bancoDados')) || [];
+            let banco = JSON.parse(localStorage.getItem('dadosSistema')) || [];
             banco.push(cliente);
-            localStorage.setItem('bancoDados', JSON.stringify(banco));
+            localStorage.setItem('dadosSistema', JSON.stringify(banco));
 
-            alert("Cadastrado com sucesso!");
+            alert("Cadastro realizado com sucesso!");
             this.reset();
 
-            if(modoAtual === 'admin') {
-                verTela('tela-admin');
+            if(modoAdmin) {
+                mostrarTela('tela-admin-view');
                 renderizarLista();
             } else {
-                sair();
+                voltarParaPerfil();
             }
         });
 
         function renderizarLista() {
             const box = document.getElementById('lista-clientes');
-            const dados = JSON.parse(localStorage.getItem('bancoDados')) || [];
-            box.innerHTML = dados.length === 0 ? "<p>Nenhum registro encontrado.</p>" : "";
+            const dados = JSON.parse(localStorage.getItem('dadosSistema')) || [];
+            box.innerHTML = dados.length === 0 ? "<p>Nenhum cliente no banco.</p>" : "";
 
             dados.forEach(c => {
                 const div = document.createElement('div');
                 div.className = 'cliente-item';
                 div.innerHTML = `
                     <button class="btn-delete" onclick="remover(${c.id})">Apagar</button>
-                    <strong>${c.nome}</strong> <span class="badge">${c.plano}</span>
+                    <strong>${c.nome}</strong> <span style="font-size:0.7rem" class="btn-outline">${c.plano}</span>
                     <div style="font-size:0.8rem; color:#666; margin-top:5px;">
                         ${c.email} | ${c.telefone}
                     </div>
@@ -208,10 +197,10 @@
         }
 
         function remover(id) {
-            if(confirm("Deseja excluir este cliente?")) {
-                let banco = JSON.parse(localStorage.getItem('bancoDados')) || [];
+            if(confirm("Deseja mesmo excluir?")) {
+                let banco = JSON.parse(localStorage.getItem('dadosSistema')) || [];
                 banco = banco.filter(c => c.id !== id);
-                localStorage.setItem('bancoDados', JSON.stringify(banco));
+                localStorage.setItem('dadosSistema', JSON.stringify(banco));
                 renderizarLista();
             }
         }
