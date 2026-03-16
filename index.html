@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Cliente - Total Roxo</title>
+    <title>Cadastro de Cliente - Visualização de Dados</title>
     <style>
-        /* Fundo Totalmente Roxo */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            /* Degradê de Roxo Escuro para Roxo Médio */
-            background: linear-gradient(135deg, #4b0082 0%, #8e44ad 100%); 
+            background: linear-gradient(135deg, #4b0082 0%, #6a1b9a 100%); 
             display: flex; 
             justify-content: center; 
             align-items: flex-start;
@@ -24,12 +22,11 @@
             border-radius: 15px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
             width: 100%; 
-            max-width: 450px; 
+            max-width: 500px; 
         }
 
-        h2 { color: #6a11cb; margin-top: 0; }
-        p { color: #666; font-size: 0.9rem; }
-
+        h2 { color: #4b0082; margin-top: 0; }
+        
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #4b0082; }
         
@@ -40,15 +37,12 @@
             border: 2px solid #f3e5f5; 
             border-radius: 8px; 
             outline: none;
-            transition: all 0.3s;
         }
 
-        /* Borda roxa ao clicar no campo */
-        input:focus { border-color: #8e44ad; box-shadow: 0 0 5px rgba(142, 68, 173, 0.3); }
+        input:focus { border-color: #8e44ad; }
 
         .row { display: flex; gap: 15px; }
         
-        /* Botão Roxo */
         .btn-enviar { 
             width: 100%; 
             padding: 12px; 
@@ -59,85 +53,97 @@
             cursor: pointer; 
             font-size: 16px; 
             font-weight: bold;
-            margin-top: 15px;
-            transition: background 0.3s;
+            transition: 0.3s;
         }
 
-        .btn-enviar:hover { background-color: #6a1b9a; }
+        .btn-enviar:hover { background-color: #4b0082; }
 
-        /* Estilo da Lista */
-        .lista-container { 
-            margin-top: 30px; 
-            border-top: 2px solid #f3e5f5; 
-            padding-top: 20px; 
-        }
-
-        .lista-container h3 { color: #4b0082; font-size: 1.1rem; }
+        /* Estilo da Lista e Detalhes */
+        .lista-container { margin-top: 30px; border-top: 2px solid #f3e5f5; padding-top: 20px; }
         
         #lista-clientes { list-style: none; padding: 0; }
         
-        #lista-clientes li { 
+        .cliente-item { 
             background: #fdfaff; 
-            padding: 12px; 
+            padding: 15px; 
             border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            border-left: 4px solid #8e44ad;
+            margin-bottom: 10px;
+            border-left: 5px solid #8e44ad;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        .plano-tag { 
-            font-size: 0.7rem; 
-            font-weight: bold;
-            text-transform: uppercase; 
-            background: #f3e5f5; 
-            color: #8e44ad; 
-            padding: 4px 10px; 
-            border-radius: 20px;
+        .cliente-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .detalhes {
+            display: none; /* Escondido por padrão */
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #ddd;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .detalhes p { margin: 5px 0; }
+        .detalhes strong { color: #8e44ad; }
+
+        .tag-plano {
+            font-size: 0.7rem;
+            background: #8e44ad;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        .btn-ver {
+            font-size: 0.8rem;
+            color: #8e44ad;
+            background: none;
+            border: 1px solid #8e44ad;
+            padding: 2px 5px;
+            border-radius: 4px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <form class="cadastro-form" id="formCadastro">
+        <form id="formCadastro">
             <h2>Cadastro de Cliente</h2>
-            <p>Preencha os dados abaixo para criar a conta.</p>
-
             <div class="input-group">
-                <label for="nome">Nome Completo</label>
-                <input type="text" id="nome" name="nome" placeholder="Ex: João Silva" required>
+                <label>Nome Completo</label>
+                <input type="text" id="nome" required>
             </div>
-
             <div class="input-group">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
+                <label>E-mail</label>
+                <input type="email" id="email" required>
             </div>
-
             <div class="row">
                 <div class="input-group" style="flex: 2;">
-                    <label for="telefone">Telefone</label>
-                    <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999">
+                    <label>Telefone</label>
+                    <input type="tel" id="telefone">
                 </div>
                 <div class="input-group" style="flex: 1;">
-                    <label for="tipo">Plano</label>
-                    <select id="tipo" name="tipo">
+                    <label>Plano</label>
+                    <select id="tipo">
                         <option value="Básico">Básico</option>
                         <option value="Premium">Premium</option>
                         <option value="Business">Business</option>
                     </select>
                 </div>
             </div>
-
             <button type="submit" class="btn-enviar">Finalizar Cadastro</button>
         </form>
 
         <div class="lista-container">
             <h3>Clientes Cadastrados</h3>
-            <ul id="lista-clientes">
-                </ul>
+            <p style="font-size: 0.8rem; color: #888;">Clique no nome para ver os dados.</p>
+            <ul id="lista-clientes"></ul>
         </div>
     </div>
 
@@ -146,38 +152,56 @@
         const listaUl = document.getElementById('lista-clientes');
 
         window.onload = () => {
-            const salvos = JSON.parse(localStorage.getItem('meusClientes')) || [];
-            salvos.forEach(c => adicionarNaTela(c.nome, c.plano));
+            const salvos = JSON.parse(localStorage.getItem('bancoClientes')) || [];
+            salvos.forEach(c => adicionarNaTela(c));
         };
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const nome = document.getElementById('nome').value;
-            const plano = document.getElementById('tipo').value;
+            const novoCliente = {
+                nome: document.getElementById('nome').value,
+                email: document.getElementById('email').value,
+                telefone: document.getElementById('telefone').value || 'Não informado',
+                plano: document.getElementById('tipo').value
+            };
 
-            if (nome) {
-                adicionarNaTela(nome, plano);
-                salvar(nome, plano);
-                form.reset();
-            }
+            adicionarNaTela(novoCliente);
+            salvar(novoCliente);
+            form.reset();
         });
 
-        function adicionarNaTela(nome, plano) {
+        function adicionarNaTela(cliente) {
             const li = document.createElement('li');
+            li.className = 'cliente-item';
+            
             li.innerHTML = `
-                <strong>${nome}</strong> 
-                <span class="plano-tag">${plano}</span>
+                <div class="cliente-topo" onclick="toggleDetalhes(this)">
+                    <strong>${cliente.nome}</strong>
+                    <div>
+                        <span class="tag-plano">${cliente.plano}</span>
+                        <button class="btn-ver">Ver Dados</button>
+                    </div>
+                </div>
+                <div class="detalhes">
+                    <p><strong>E-mail:</strong> ${cliente.email}</p>
+                    <p><strong>Telefone:</strong> ${cliente.telefone}</p>
+                </div>
             `;
             listaUl.appendChild(li);
         }
 
-        function salvar(nome, plano) {
-            let clientes = JSON.parse(localStorage.getItem('meusClientes')) || [];
-            clientes.push({ nome, plano });
-            localStorage.setItem('meusClientes', JSON.stringify(clientes));
+        function toggleDetalhes(elemento) {
+            const abaDetalhes = elemento.nextElementSibling;
+            const estaVisivel = abaDetalhes.style.display === 'block';
+            abaDetalhes.style.display = estaVisivel ? 'none' : 'block';
+        }
+
+        function salvar(cliente) {
+            let clientes = JSON.parse(localStorage.getItem('bancoClientes')) || [];
+            clientes.push(cliente);
+            localStorage.setItem('bancoClientes', JSON.stringify(clientes));
         }
     </script>
-
 </body>
 </html>
