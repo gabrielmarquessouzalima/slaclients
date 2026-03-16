@@ -3,25 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Cliente</title>
+    <title>Cadastro de Cliente - Roxo Premium</title>
     <style>
-        /* Estilos básicos para o formulário e a lista */
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; padding: 20px; }
-        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        .row { display: flex; gap: 10px; }
-        .btn-enviar { width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        .btn-enviar:hover { background-color: #218838; }
+        /* Fundo Roxo com Gradiente */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+        }
 
-        /* Estilo da Lista de Clientes */
-        .lista-container { margin-top: 30px; border-top: 20px solid #f4f4f9; padding-top: 20px; }
-        .lista-container h3 { margin-bottom: 10px; color: #333; }
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            width: 100%; 
+            max-width: 450px; 
+        }
+
+        h2 { color: #4b0082; margin-top: 0; }
+        p { color: #666; font-size: 0.9rem; }
+
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        
+        input, select { 
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            border: 2px solid #eee; 
+            border-radius: 8px; 
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus { border-color: #6a11cb; }
+
+        .row { display: flex; gap: 15px; }
+        
+        /* Botão estilizado */
+        .btn-enviar { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #6a11cb; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .btn-enviar:hover { background-color: #4b0082; }
+
+        /* Estilo da Lista */
+        .lista-container { 
+            margin-top: 30px; 
+            border-top: 2px solid #f0f0f0; 
+            padding-top: 20px; 
+        }
+
+        .lista-container h3 { color: #4b0082; font-size: 1.1rem; }
+        
         #lista-clientes { list-style: none; padding: 0; }
-        #lista-clientes li { background: #fff; padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
-        #lista-clientes li:last-child { border-bottom: none; }
-        .data-cadastro { font-size: 0.8rem; color: #888; }
+        
+        #lista-clientes li { 
+            background: #f8f9fa; 
+            padding: 12px; 
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-left: 4px solid #6a11cb;
+        }
+
+        .data-label { 
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+            background: #e0d4ff; 
+            color: #6a11cb; 
+            padding: 2px 8px; 
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
@@ -42,16 +113,16 @@
             </div>
 
             <div class="row">
-                <div class="input-group">
+                <div class="input-group" style="flex: 2;">
                     <label for="telefone">Telefone</label>
                     <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999">
                 </div>
-                <div class="input-group">
-                    <label for="tipo">Tipo de Plano</label>
+                <div class="input-group" style="flex: 1;">
+                    <label for="tipo">Plano</label>
                     <select id="tipo" name="tipo">
-                        <option value="basico">Básico</option>
-                        <option value="premium">Premium</option>
-                        <option value="business">Business</option>
+                        <option value="Básico">Básico</option>
+                        <option value="Premium">Premium</option>
+                        <option value="Business">Business</option>
                     </select>
                 </div>
             </div>
@@ -70,40 +141,38 @@
         const form = document.getElementById('formCadastro');
         const listaUl = document.getElementById('lista-clientes');
 
-        // Função para carregar nomes salvos ao abrir a página
-        window.onload = function() {
-            const clientesSalvos = JSON.parse(localStorage.getItem('clientes')) || [];
-            clientesSalvos.forEach(cliente => adicionarNaTela(cliente));
+        // Carregar dados salvos
+        window.onload = () => {
+            const salvos = JSON.parse(localStorage.getItem('meusClientes')) || [];
+            salvos.forEach(c => adicionarNaTela(c.nome, c.plano));
         };
 
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); // Não deixa a página recarregar
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nome').value;
+            const plano = document.getElementById('tipo').value;
 
-            const nomeInput = document.getElementById('nome');
-            const nomeDigitado = nomeInput.value;
-
-            if (nomeDigitado) {
-                // 1. Adicionar visualmente na tela
-                adicionarNaTela(nomeDigitado);
-
-                // 2. Salvar no LocalStorage (memória do navegador)
-                salvarNoLocalStorage(nomeDigitado);
-
-                // 3. Limpar o formulário
+            if (nome) {
+                adicionarNaTela(nome, plano);
+                salvar(nome, plano);
                 form.reset();
             }
         });
 
-        function adicionarNaTela(nome) {
+        function adicionarNaTela(nome, plano) {
             const li = document.createElement('li');
-            li.innerHTML = `<span>${nome}</span> <span class="data-cadastro">Cadastrado</span>`;
+            li.innerHTML = `
+                <strong>${nome}</strong> 
+                <span class="data-label">${plano}</span>
+            `;
             listaUl.appendChild(li);
         }
 
-        function salvarNoLocalStorage(nome) {
-            let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
-            clientes.push(nome);
-            localStorage.setItem('clientes', JSON.stringify(clientes));
+        function salvar(nome, plano) {
+            let clientes = JSON.parse(localStorage.getItem('meusClientes')) || [];
+            clientes.push({ nome, plano });
+            localStorage.setItem('meusClientes', JSON.stringify(clientes));
         }
     </script>
 
