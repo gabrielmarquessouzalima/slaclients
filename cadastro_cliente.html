@@ -5,10 +5,11 @@
     <title>Cadastro de Cliente</title>
     <style>
         :root { --primary: #8e44ad; --bg: #1a1a2e; }
-        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         input, select { width: 100%; padding: 12px; border: 2px solid #f3e5f5; border-radius: 8px; margin-bottom: 12px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; transition: 0.3s; }
+        .btn:hover { background: #732d91; }
     </style>
 </head>
 <body>
@@ -23,36 +24,37 @@
                 <option value="Premium">Plano Premium</option>
                 <option value="Business">Plano Business</option>
             </select>
-            <button type="submit" class="btn">Enviar Cadastro</button>
+            <button type="submit" class="btn">Enviar e Ir para Vendas</button>
         </form>
-        <p><a href="index.html" style="color: #e74c3c; text-decoration: none; font-weight: bold;">Cancelar</a></p>
     </div>
 
     <script>
         document.getElementById('formCadastro').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Cria o objeto do cliente
             const cliente = {
                 id: Date.now(),
                 nome: document.getElementById('nome').value,
                 email: document.getElementById('email').value,
                 telefone: document.getElementById('telefone').value || 'Não informado',
-                plano: document.getElementById('tipo').value
+                plano: document.getElementById('tipo').value,
+                compras: [] // Lista de compras vazia para novos clientes
             };
 
-            // Salva no LocalStorage
+            // Salva no banco geral
             let banco = JSON.parse(localStorage.getItem('bancoGabriel')) || [];
             banco.push(cliente);
             localStorage.setItem('bancoGabriel', JSON.stringify(banco));
 
-            alert("Cadastro realizado com sucesso!");
+            // Salva o cliente ATUAL para a tela de vendas saber quem é
+            localStorage.setItem('clienteLogado', JSON.stringify(cliente));
 
-            // --- NOVIDADE AQUI ---
-            // Abre a página de vendas em uma NOVA ABA (_blank)
+            alert("Bem-vindo(a), " + cliente.nome + "!");
+            
+            // Abre a nova aba de vendas
             window.open("vendas.html", "_blank");
-
-            // Redireciona a página ATUAL para a index
+            
+            // Opcional: redireciona a atual
             window.location.href = "index.html"; 
         });
     </script>
