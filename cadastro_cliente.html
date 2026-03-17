@@ -31,6 +31,8 @@
     <script>
         document.getElementById('formCadastro').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Cria o objeto do cliente
             const cliente = {
                 id: Date.now(),
                 nome: document.getElementById('nome').value,
@@ -39,12 +41,19 @@
                 plano: document.getElementById('tipo').value
             };
 
+            // Salva no LocalStorage
             let banco = JSON.parse(localStorage.getItem('bancoGabriel')) || [];
             banco.push(cliente);
             localStorage.setItem('bancoGabriel', JSON.stringify(banco));
 
             alert("Cadastro realizado com sucesso!");
-            window.location.href = "index.html"; // Volta para a inicial após cadastrar
+
+            // --- NOVIDADE AQUI ---
+            // Abre a página de vendas em uma NOVA ABA (_blank)
+            window.open("vendas.html", "_blank");
+
+            // Redireciona a página ATUAL para a index
+            window.location.href = "index.html"; 
         });
     </script>
 </body>
