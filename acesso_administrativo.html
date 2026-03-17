@@ -2,36 +2,49 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Acesso Administrativo</title>
+    <title>Painel de Controle - ADM Gabriel</title>
     <style>
-        /* Mesmos estilos anteriores para manter a identidade visual */
-        :root { --primary: #8e44ad; --dark: #4b0082; --bg: #1a1a2e; --danger: #e74c3c; }
-        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 450px; text-align: center; }
+        :root { --primary: #8e44ad; --dark: #1a1a2e; --danger: #e74c3c; --success: #27ae60; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .container { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 700px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         input { width: 100%; padding: 12px; border: 2px solid #f3e5f5; border-radius: 8px; margin-bottom: 12px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
-        .cliente-item { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid var(--primary); text-align: left; }
-        .btn-delete { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 4px; float: right; cursor: pointer; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; transition: 0.3s; }
+        
+        /* Cartão do Cliente */
+        .cliente-card { background: #fdfdfd; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #eee; border-left: 6px solid var(--primary); text-align: left; position: relative; }
+        .cliente-card h3 { margin: 0 0 10px 0; color: var(--dark); display: flex; justify-content: space-between; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; margin-bottom: 15px; }
+        .tag-plano { background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; vertical-align: middle; }
+        
+        /* Seção de Compras no ADM */
+        .compras-lista { background: #f0f0f5; padding: 10px; border-radius: 6px; font-size: 0.85rem; }
+        .compra-item { border-bottom: 1px solid #ddd; padding: 5px 0; display: flex; justify-content: space-between; }
+        .compra-item:last-child { border-bottom: none; }
+        
+        .btn-delete { background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
         .hidden { display: none; }
+        .no-data { color: #888; font-style: italic; }
     </style>
 </head>
 <body>
 
     <div id="login-area" class="container">
         <h2>Acesso ADM</h2>
-        <input type="text" id="login-nome" placeholder="Seu Nome">
-        <input type="email" id="login-email" placeholder="Seu E-mail">
-        <input type="password" id="login-senha" placeholder="Sua Senha">
-        <button class="btn" onclick="validarGabriel()">Validar Acesso</button>
-        <p><a href="index.html" style="color: #666;">Voltar</a></p>
+        <input type="text" id="login-nome" placeholder="Nome de Usuário">
+        <input type="email" id="login-email" placeholder="E-mail Institucional">
+        <input type="password" id="login-senha" placeholder="Senha de Acesso">
+        <button class="btn" onclick="validarGabriel()">Entrar no Painel</button>
+        <p><a href="index.html" style="color: #666; text-decoration: none;">← Voltar ao Início</a></p>
     </div>
 
-    <div id="admin-view" class="container hidden" style="max-width: 600px;">
-        <div style="display:flex; justify-content: space-between; align-items: center;">
-            <h2>Painel do Gabriel</h2>
-            <button onclick="window.location.href='index.html'" style="color:red; border:none; background:none; cursor:pointer;">Sair</button>
+    <div id="admin-view" class="container hidden">
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin:0;">Painel de Gestão</h2>
+            <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:bold;">Sair</button>
         </div>
-        <div id="lista-clientes"></div>
+        
+        <div id="lista-clientes">
+            </div>
     </div>
 
     <script>
@@ -47,31 +60,63 @@
             if (n === ADM_NOME && e === ADM_EMAIL && s === ADM_SENHA) {
                 document.getElementById('login-area').classList.add('hidden');
                 document.getElementById('admin-view').classList.remove('hidden');
-                renderizarLista();
+                renderizarListaCompleta();
             } else {
-                alert("Acesso Negado!");
+                alert("Credenciais incorretas!");
             }
         }
 
-        function renderizarLista() {
+        function renderizarListaCompleta() {
             const box = document.getElementById('lista-clientes');
             const dados = JSON.parse(localStorage.getItem('bancoGabriel')) || [];
-            box.innerHTML = dados.length === 0 ? "<p>Ninguém se cadastrou ainda.</p>" : "";
+            
+            if (dados.length === 0) {
+                box.innerHTML = "<p class='no-data'>Nenhum cliente cadastrado no sistema.</p>";
+                return;
+            }
+
+            box.innerHTML = "";
             dados.forEach(c => {
-                const div = document.createElement('div');
-                div.className = 'cliente-item';
-                div.innerHTML = `<button class="btn-delete" onclick="remover(${c.id})">Remover</button>
-                                 <strong>👤 ${c.nome}</strong><br><small>📧 ${c.email} | 📞 ${c.telefone}</small>`;
-                box.appendChild(div);
+                // Criar o HTML para as compras
+                let comprasHTML = "";
+                if (c.compras && c.compras.length > 0) {
+                    c.compras.forEach(compra => {
+                        comprasHTML += `
+                            <div class="compra-item">
+                                <span>🛒 ${compra.item}</span>
+                                <span>R$ ${compra.valor.toFixed(2)}</span>
+                            </div>`;
+                    });
+                } else {
+                    comprasHTML = "<p class='no-data' style='margin:0;'>Nenhuma compra realizada.</p>";
+                }
+
+                const card = document.createElement('div');
+                card.className = 'cliente-card';
+                card.innerHTML = `
+                    <h3>
+                        <span>👤 ${c.nome} <span class="tag-plano">${c.plano}</span></span>
+                        <button class="btn-delete" onclick="remover(${c.id})">Remover</button>
+                    </h3>
+                    <div class="info-grid">
+                        <span><strong>📧 E-mail:</strong><br>${c.email}</span>
+                        <span><strong>📞 Telefone:</strong><br>${c.telefone}</span>
+                    </div>
+                    <div class="compras-lista">
+                        <strong>📦 Histórico de Compras:</strong>
+                        <div style="margin-top:8px;">${comprasHTML}</div>
+                    </div>
+                `;
+                box.appendChild(card);
             });
         }
 
         function remover(id) {
-            if(confirm("Remover cliente?")) {
+            if(confirm("Tem certeza que deseja excluir este cliente e todo o histórico dele?")) {
                 let banco = JSON.parse(localStorage.getItem('bancoGabriel')) || [];
                 banco = banco.filter(c => c.id !== id);
                 localStorage.setItem('bancoGabriel', JSON.stringify(banco));
-                renderizarLista();
+                renderizarListaCompleta();
             }
         }
     </script>
